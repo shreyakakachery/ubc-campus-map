@@ -1,49 +1,78 @@
 <html>
   <head>
-
     <title>Leaflet Boilerplate</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Source for your Leaflet JavaScript and CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""/>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
     <!-- Make sure you put this AFTER Leaflet's CSS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
 
     <script src="./ubcbuildings.js" charset="utf-8"></script>
   </head>
 
   <body>
     <!-- Your map's HTML container -->
-    <div id="mapid" style="height: 100%;"></div>
+    <div id="mapid" style="height: 100%"></div>
 
     <!-- Script for your map between <script> and </script> -->
     <script>
+      // Initialize the  map, sets the initial view location and zoom level
+      var mymap = L.map("mapid").setView([49.260605, -123.245995], 14);
 
-      // Initialize your map, sets the initial view location and zoom level
-      var mymap = L.map('mapid').setView([49.2827, -123.1207], 11);
+      //Load the tile layer
+      //   var OpenStreetMap_BZH = L.tileLayer('https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png', {
+      //   attribution: 'Map Tiles By <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="http://www.openstreetmap.bzh/" target="_blank">Breton OpenStreetMap Team</a>',
+      //   subdomains: 'abcd',
+      //   minZoom: 0,
+      //   maxZoom: 20,
+      //   ext: 'png',
+      //   scrollWheelZoom: false,
+      // }).addTo(mymap);
 
-      //Load the tile layer, paste in new tile layer of choice.
-      var OpenStreetMap_BZH = L.tileLayer('https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png', {
-      attribution: 'Map Tiles By <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="http://www.openstreetmap.bzh/" target="_blank">Breton OpenStreetMap Team</a>',
-      subdomains: 'abcd',
-      minZoom: 0,
-      maxZoom: 20,
-      ext: 'png',
-      scrollWheelZoom: false,
-    }).addTo(mymap);
+      // watercolour map
+      var Stadia_StamenWatercolor = L.tileLayer(
+        "https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.{ext}",
+        {
+          minZoom: 0,
+          maxZoom: 20,
+          attribution:
+            '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          ext: "jpg",
+        }
+      ).addTo(mymap);
 
-      //Paste your marker here
+      //ubc campus marker
+      var ubccampus = L.marker([49.260605, -123.245995])
+        .addTo(mymap)
+        .bindPopup("Hello :D!");
 
-      //Paste the L.geoJSON function here
+      //L.geoJSON function for loading ubc buildings
+      // L.geoJSON(ubcbuildings, {onEachFeature}).addTo(mymap);
 
-      //Paste the popup function here
+      L.geoJSON(ubcbuildings, { onEachFeature,
+        style: function (feature) {
+          return {
+            color: "#000", // Outline color
+            weight: 0.2, // Outline thickness
+            fillColor: "#000", // Fill color inside the buildings
+            fillOpacity: 0.5, // Opacity of the fill color
+          };
+        },
+      }).addTo(mymap);
 
-     
+      //Popup function 
+      function onEachFeature(feature, layer) {if (feature.properties && feature.properties.NAME) {layer.bindPopup(feature.properties.NAME);}}
 
     </script>
   </body>
